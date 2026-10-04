@@ -12,13 +12,13 @@ namespace Week2_Task_2.Controllers
     {
         private readonly iservices_reservation service;
         private readonly ILogger<reservation> logger;
-        private readonly data_base db;
+       // private readonly data_base db;
 
-        public reservation(iservices_reservation service, ILogger<reservation> logger, data_base db)
+        public reservation(iservices_reservation service, ILogger<reservation> logger)
         {
             this.service = service;
             this.logger = logger;
-            this.db = db;
+           // this.db = db;
         }
 
         [HttpPost]
@@ -57,15 +57,16 @@ namespace Week2_Task_2.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            if (db.reservations.Count() == 0)
+            var res = await service.GetAll();
+            if (res.Count == 0)
             {
                 logger.LogWarning("theres no reservations yet");
                 return NotFound();
             }
-            return Ok(db.reservations);
+            return Ok(res);
         }
-        [HttpPut("{id}")]
-        public async Task<ActionResult> update(int id, [FromBody] add_reservation dto)
+     //   [HttpPut("{id}")]
+     /*   public async Task<ActionResult> update(int id, [FromBody] add_reservation dto)
         {
             var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
             if (res == null)
@@ -82,10 +83,16 @@ namespace Week2_Task_2.Controllers
 
 
         }
+     */
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
-            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            if (id <= 0)
+            {
+                logger.LogWarning("the id {id} is not valid", id);
+                return BadRequest("the id must be above 0");
+            }
+            var res = await service.GetById(id);
             if (res == null)
             {
                 logger.LogWarning("the id{id} is not valid", id);
