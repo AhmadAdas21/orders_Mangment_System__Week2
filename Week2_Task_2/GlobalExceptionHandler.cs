@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Week2_Task_2.Dto;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
@@ -20,15 +21,24 @@ public class GlobalExceptionHandler : IExceptionHandler
             "An unexpected error occurred while processing the request"
         );
 
-        context.Response.StatusCode =
-            StatusCodes.Status500InternalServerError;
+        int statusCode;
 
+        if (exception is InvalidOperationException)
+        {
+            statusCode = StatusCodes.Status400BadRequest;
+        }
+        else
+        {
+            statusCode = StatusCodes.Status500InternalServerError;
+        }
+
+        context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
-        var response = new
+        var response = new error_response
         {
-            statusCode = 500,
-            message = "An unexpected error occurred"
+            statusCode = statusCode,
+            message = exception.Message
         };
 
         await context.Response.WriteAsJsonAsync(

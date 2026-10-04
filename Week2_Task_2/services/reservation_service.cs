@@ -102,6 +102,10 @@ namespace Week2_Task_2.services
                 logger.LogWarning("the reservation id with id {id} dosent exist", id);
                 throw new Exception("the reservation dosent exist");
             }
+            if (res.status != "Active")
+            {
+                return false;
+            }
             foreach (var i in res.items)
             {
                 i.product.stock += i.quantity;

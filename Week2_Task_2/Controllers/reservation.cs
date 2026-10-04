@@ -26,8 +26,8 @@ namespace Week2_Task_2.Controllers
         {
             var reservation = await service.Create(dto);
             logger.LogInformation("reservation with id{id}", reservation.id);
-            await db.reservations.AddAsync(reservation);
-            await db.SaveChangesAsync();
+        //    await db.reservations.AddAsync(reservation);
+         //   await db.SaveChangesAsync();
             
             return CreatedAtAction(nameof(GetById), new { id = reservation.id },
                new
