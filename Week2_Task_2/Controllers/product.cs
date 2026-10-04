@@ -55,7 +55,8 @@ namespace Week2_Task_2.Controllers
         {
             if (id < 0)
             {
-                return BadRequest("the Is must be greater than 0or zero");
+                return NotFound("product not found");
+          //      return BadRequest("the Is must be greater than 0or zero");
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
 
@@ -95,7 +96,8 @@ namespace Week2_Task_2.Controllers
         {
             if (id < 0)
             {
-                return BadRequest("the id must be grater than 0");
+                return NotFound("product not found");
+             //   return BadRequest("the id must be grater than 0");
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
@@ -120,7 +122,8 @@ namespace Week2_Task_2.Controllers
         {
             if (id < 0)
             {
-                return BadRequest("must be above 0");
+                return NotFound("product not found");
+             //   return BadRequest("must be above 0");
                 
             }
           //var uu = await _data.prod.FirstOrDefaultAsync(x => x.id == id);

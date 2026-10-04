@@ -12,7 +12,7 @@ using Week2_Task_2.services;
 namespace Week2_Task_2.Controllers
 {
     [ApiController]
-    [Route("Api/customer")]
+    [Route("api/customers")]
 
 
     public class customeri: ControllerBase
@@ -57,7 +57,8 @@ namespace Week2_Task_2.Controllers
 
             await _service.Create(customer);
             logger.LogInformation("the customer created succefully", customer.id);
-            return Ok(customer);
+            // return Ok(customer);
+            return CreatedAtAction(nameof(Get_by_id),new { id = customer.id },customer);
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<List<response_customer>>> update(int id, create_customer dto)

@@ -157,7 +157,7 @@ namespace Week2_Task_2.services
                 throw new InvalidOperationException("cancelled reservation cannot be converted");
             }
 
-            if (res.status == "Expired")
+            if (res.status == "expired")
             {
                 throw new InvalidOperationException("expired reservation cannot be converted");
             }
