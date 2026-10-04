@@ -13,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<iservices, services>();
+builder.Services.AddScoped<customer_services>();
+builder.Services.AddScoped<order_services>();
 builder.Services.AddScoped<iservices_reservation, reservation_service>();
 builder.Services.AddHostedService<reservation_expiration_service>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
