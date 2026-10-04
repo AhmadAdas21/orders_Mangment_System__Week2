@@ -14,12 +14,11 @@ namespace Week2_Task_2.Controllers
     [Route("api/products")]
     public class producti : ControllerBase
     {
-        private readonly data_base _data;
+       // private readonly data_base _data;
         private readonly iservices s;
         private readonly ILogger<producti> logger;
-        public producti(iservices service, data_base d, ILogger<producti> logger)
+        public producti(iservices service,ILogger<producti> logger)
         {
-            _data = d;
             s = service;
             this.logger = logger;
         }
@@ -53,12 +52,12 @@ namespace Week2_Task_2.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<response_prod>> get_by_id(int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
               //  return NotFound("product not found");
                 return BadRequest("the Is must be greater than 0or zero");
             }
-            var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
+            var x =await s.get_product_by_id(id);
 
             if (x == null)
             {
@@ -75,17 +74,7 @@ namespace Week2_Task_2.Controllers
                 return BadRequest("the form is null");
             }
 
-            var x = new models.product
-            {
-                name = d.name,
-                price = d.price,
-                description = d.description,
-                ksu = d.ksu,
-                stock = d.stock,
-                active = d.active
-            };
-            await _data.prod.AddAsync(x);
-            await _data.SaveChangesAsync();
+            var x = await s.CreateProduct(d);
             logger.LogInformation("product {id}created", x.id);
 
             return CreatedAtAction(nameof(get_by_id), new { id = x.id }, x);
@@ -94,25 +83,19 @@ namespace Week2_Task_2.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<response_prod>> update(update_prod d, int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
             //    return NotFound("product not found");
                return BadRequest("the id must be grater than 0");
             }
-            var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
-            if (x == null)
-            {
-                logger.LogWarning("product {Id} not found", id);
-                return NotFound("the product is null");
-                
-            }
-            x.name = d.name;
-            x.price = d.price;
-            x.description = d.description;
-            x.active = d.active;
-            x.stock = d.stock;
+            var x = await s.UpdateProduct(id, d);
 
-            await _data.SaveChangesAsync();
+            if (!x)
+            {
+                logger.LogWarning("product {id} not found", id );
+                return NotFound( "the product is null");
+            }
+            
 
             return NoContent();
         }
@@ -120,24 +103,22 @@ namespace Week2_Task_2.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<response_prod>> Delete(int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
           //      return NotFound("product not found");
                 return BadRequest("must be above 0");
                 
             }
-          //var uu = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
+            //var uu = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
 
-            var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
-            if(x == null)
+            var x =await s.DeleteProduct(id);
+
+            if (!x)
             {
-                logger.LogWarning(" the product is not found {id}", id);
-                return NotFound("the product is not found");
+                logger.LogWarning("the product is not found {id}", id);
 
-                
+                return NotFound("the product is not found");
             }
-            _data.prod.Remove(x);
-            await _data.SaveChangesAsync();
             logger.LogInformation("the product delteed succesfully{id}", id);
             return NoContent();
         }
