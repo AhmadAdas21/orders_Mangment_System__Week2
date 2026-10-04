@@ -188,19 +188,19 @@ namespace Week2_Task_2.Controllers
                 return BadRequest("the id must be above 0");
             }
             var x = await service.Update(id, dto);
-            if (x == null)
+            if (!x)
             {
-                logger.LogWarning("the order with id {id} not found",id);
+                logger.LogWarning("the order with id {id} not found", id);
                 return NotFound("order not found");
             }
-           
-           
 
-          //  x.customer_id=dto.customer_id;
+
+
+            //  x.customer_id=dto.customer_id;
 
             //x.status = dto.status;
 
-       //     await dp.SaveChangesAsync();
+            //     await dp.SaveChangesAsync();
 
 
             return NoContent();
@@ -211,17 +211,22 @@ namespace Week2_Task_2.Controllers
         public async Task<ActionResult<List<response_order>>> delete(int id)
         {
         //    var x = await dp.order.FirstOrDefaultAsync(x => x.id == id);
-            if (id < 0)
+            if (id <= 0)
             {
                 return BadRequest("must be above 0");
             }
             var x= await service.Delete(id);
+            if (!x)
+            {
+                logger.LogWarning("the order with id {id} not found", id);
+                return NotFound("order not found");
+            }
 
-            
 
-          //  var s = await dp.oi.Where(x => x.order_id == id).ToListAsync();  
 
-           
+            //  var s = await dp.oi.Where(x => x.order_id == id).ToListAsync();  
+
+
             logger.LogInformation( "order {id}id deleted successfully", id);
 
             return NoContent();

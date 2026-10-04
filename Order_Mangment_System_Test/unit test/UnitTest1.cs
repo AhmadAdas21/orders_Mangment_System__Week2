@@ -19,8 +19,8 @@ namespace Order_Mangment_System_Test
 {
     public class UnitTest1
     {
-        private readonly data_base db;
-        private readonly iservices s;
+        //  private readonly data_base db;
+        //  private readonly iservices s;
 
         [Fact]
         public async Task if_create_order_and_the_customer_not_exixt_return_bad()
@@ -71,16 +71,16 @@ namespace Order_Mangment_System_Test
 
             };
 
-            var service = new services(db);
+            var service = new order_services(db);
 
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
-            var oo = await controller.Create(order);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var oo = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(order));
             db.SaveChangesAsync();
-            var bad =  Assert.IsType<BadRequestObjectResult>(oo.Result);
-            Assert.Equal("the customer id is invalid or the customer does not exist", bad.Value);
+            var bad = oo;
+            Assert.Equal("the customer does not exist", bad.Message);
 
 
-           
+
 
 
 
@@ -93,7 +93,7 @@ namespace Order_Mangment_System_Test
             var connection = new SqliteConnection("DataSource=:memory:");
             await connection.OpenAsync();
 
-            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection) .Options;
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
 
             await using var db = new data_base(options);
 
@@ -123,9 +123,9 @@ namespace Order_Mangment_System_Test
 
             await db.SaveChangesAsync();
 
-            var service = new services(db);
+            var service = new order_services(db);
 
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var dto = new add_order
             {
@@ -141,12 +141,12 @@ namespace Order_Mangment_System_Test
         }
             };
 
-            var result = await controller.Create(dto);
+            var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(dto));
 
-            var o =Assert.IsType<BadRequestObjectResult>(result.Result);
+            var o = result;
 
-            Assert.Equal("the quantity must be above 0", o.Value);
-            
+            Assert.Equal("the quantity must be above 0", o.Message);
+
 
             await connection.CloseAsync();
         }
@@ -179,9 +179,9 @@ namespace Order_Mangment_System_Test
                 active = true
             };
 
-            var service = new services(db);
+            var service = new order_services(db);
 
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -200,12 +200,12 @@ namespace Order_Mangment_System_Test
                     }
                 }
             };
-         // await db.Saved
+            // await db.Saved
 
-            var result = await controller.Create(dto);
-            var c = Assert.IsType<BadRequestObjectResult>(result.Result);
+            var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(dto));
+            var c = result;
 
-            Assert.Equal("the quatity of the order is above the stock ", c.Value);
+            Assert.Equal("the quantity of the order is above the stock", c.Message);
 
             await connection.CloseAsync();
         }
@@ -242,8 +242,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -270,8 +270,8 @@ namespace Order_Mangment_System_Test
 
 
 
-            
-         //dawait connection.CloseAsync();
+
+            //dawait connection.CloseAsync();
         }
         [Fact]
         public async Task ceate_order_with_inactive_product()
@@ -293,20 +293,20 @@ namespace Order_Mangment_System_Test
             var product = new product
             {
                 id = 21,
-                name="wheel",
-                description="sss",
-                stock=25,
-                price=100,
-                ksu="zos21",
-                active=false
+                name = "wheel",
+                description = "sss",
+                stock = 25,
+                price = 100,
+                ksu = "zos21",
+                active = false
             };
-      await db.Customers.AddAsync(customer);
+            await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
             var o = new add_order
             {
                 customer_id = customer.id,
-                items = new List < add_order_item  >
+                items = new List<add_order_item>
                 {
                     new add_order_item
                     {
@@ -314,15 +314,15 @@ namespace Order_Mangment_System_Test
                         quantity = 10
                     }
                 }
-                
-            };
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
-            var kk = await controller.Create(o);
-            var oo= Assert.IsType<BadRequestObjectResult>(kk.Result);
 
-          
-            Assert.Equal("the product is not active ", oo.Value);
+            };
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var kk = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(o));
+            var oo = kk;
+
+
+            Assert.Equal("the product is not active", oo.Message);
 
 
         }
@@ -340,7 +340,7 @@ namespace Order_Mangment_System_Test
             var customer = new customer
             {
                 name = "ahmad emad",
-                email="ahmadnnnn@gmadil.com"
+                email = "ahmadnnnn@gmadil.com"
             };
             await db.Customers.AddAsync(customer);
             await db.SaveChangesAsync();
@@ -349,10 +349,10 @@ namespace Order_Mangment_System_Test
             {
                 name = "charger",
                 description = "samsung phones charger",
-                price=50,
-                stock=100,
-                ksu="ch-302",
-                active=true
+                price = 50,
+                stock = 100,
+                ksu = "ch-302",
+                active = true
 
             };
             var order = new add_order
@@ -363,18 +363,18 @@ namespace Order_Mangment_System_Test
 
                 }
             };
-        //  await db.Customers.AddAsync(customer);
+            //  await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
-            services s= new services(db);
+            order_services s = new order_services(db);
             //var con=new Controller()
-            var c = new orderi(db, s, NullLogger<orderi>.Instance);
+            var c = new orderi(s, NullLogger<orderi>.Instance);
             // await db.order.AddAsync(order);
 
-            var dd = await c.Create(order);
-            var bad= Assert.IsType<BadRequestObjectResult>(dd.Result);
-            Assert.Equal("the order must have at least one item", bad.Value);
-            
+            var dd = await Assert.ThrowsAsync<InvalidOperationException>(() => c.Create(order));
+            var bad = dd;
+            Assert.Equal("the order must have at least one item", bad.Message);
+
 
         }
         [Fact]
@@ -406,9 +406,9 @@ namespace Order_Mangment_System_Test
                 active = true
             };
 
-            var service = new services(db);
+            var service = new order_services(db);
 
-            var controller = new orderi(db, s, NullLogger<orderi>.Instance);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -429,9 +429,9 @@ namespace Order_Mangment_System_Test
             };
             // await db.Saved
 
-            var result = await controller.Create(dto);
-            var c = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal("the quantity must be above 0", c.Value);
+            var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(dto));
+            var c = result;
+            Assert.Equal("the quantity must be above 0", c.Message);
 
         }
         [Fact]
@@ -467,8 +467,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, s, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -516,7 +516,7 @@ namespace Order_Mangment_System_Test
                 description = "yummy banana",
                 stock = 500,
                 ksu = "BAN-20",
-                price=5,
+                price = 5,
                 active = true
             };
 
@@ -524,8 +524,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -542,11 +542,11 @@ namespace Order_Mangment_System_Test
 
 
             var d = await controller.Create(order);
-            var final=await db.order.FirstOrDefaultAsync(x=>x.customer_id==customer.id);
+            var final = await db.order.FirstOrDefaultAsync(x => x.customer_id == customer.id);
             await db.SaveChangesAsync();
-            
+
             Assert.Equal(50, final.total);
-            
+
 
         }
         [Fact]
@@ -583,8 +583,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -601,7 +601,7 @@ namespace Order_Mangment_System_Test
 
 
             var d = await controller.Create(order);
-            var final=await db.order.FirstOrDefaultAsync(x=>x.customer_id==customer.id);
+            var final = await db.order.FirstOrDefaultAsync(x => x.customer_id == customer.id);
             Assert.Equal("Pending", final.status);
 
         }
@@ -609,43 +609,43 @@ namespace Order_Mangment_System_Test
         public async Task create_order_and_the_order_will_exist_in_database()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
-        await connection.OpenAsync();
+            await connection.OpenAsync();
 
-        var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
 
-        await using var db = new data_base(options);
+            await using var db = new data_base(options);
 
-    await db.Database.EnsureCreatedAsync();
+            await db.Database.EnsureCreatedAsync();
 
-    var customer = new customer
-    {
-        id = 12,
-        name = "omar",
-        email = "Omar@gmail.com"
-    };
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
 
-    var product = new product
-    {
-        id = 20,
-        name = "banana",
-        description = "yummy banana",
-        stock = 500,
-        ksu = "BAN-20",
-        price = 5,
-        active = true
-    };
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                price = 5,
+                active = true
+            };
 
-    await db.Customers.AddAsync(customer);
-    await db.prod.AddAsync(product);
-    await db.SaveChangesAsync();
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
 
-    var service = new services(db);
-    var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
-    {
-        customer_id = customer.id,
-        items = new List<add_order_item>
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
                 {
                     new add_order_item
                     {
@@ -653,13 +653,13 @@ namespace Order_Mangment_System_Test
                         quantity = 10
                     }
                 }
-    };
+            };
 
 
-    var d = await controller.Create(order);
-            var final=await db.order.FirstOrDefaultAsync();
+            var d = await controller.Create(order);
+            var final = await db.order.FirstOrDefaultAsync();
             Assert.NotNull(final);
-}
+        }
         [Fact]
         public async Task create_order_and_the_order_will_returned_by_id()
 
@@ -695,8 +695,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -714,7 +714,7 @@ namespace Order_Mangment_System_Test
 
             var d = await controller.Create(order);
             var ord = await db.order.FirstOrDefaultAsync();
-            var res= controller.get_by_id(ord.id);
+            var res = controller.get_by_id(ord.id);
 
             Assert.NotNull(res);
 
@@ -752,8 +752,8 @@ namespace Order_Mangment_System_Test
             await db.prod.AddAsync(product);
             await db.SaveChangesAsync();
 
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -773,10 +773,10 @@ namespace Order_Mangment_System_Test
             created.status = "complete";
             await db.SaveChangesAsync();
 
-            var final = await controller.update(created.id, order);
-            var c = Assert.IsType<BadRequestObjectResult>(final.Result);
-            Assert.Equal("you cant modify a complete order", c.Value);
-                
+            var final = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.update(created.id, order));
+            var c = final;
+            Assert.Equal("you cant modify a complete order", c.Message);
+
         }
         [Fact]
         public async Task delete_order_that_dosent_exist()
@@ -789,11 +789,11 @@ namespace Order_Mangment_System_Test
             await using var db = new data_base(options);
 
             await db.Database.EnsureCreatedAsync();
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
             var res = await controller.delete(100);
-            var x=Assert.IsType<NotFoundObjectResult>(res.Result);
-            Assert.Equal("Order not found", x.Value);
+            var x = Assert.IsType<NotFoundObjectResult>(res.Result);
+            Assert.Equal("order not found", x.Value);
         }
         [Fact]
         public async Task get_order_and_the_order_not_found()
@@ -806,8 +806,8 @@ namespace Order_Mangment_System_Test
             await using var db = new data_base(options);
 
             await db.Database.EnsureCreatedAsync();
-            var service = new services(db);
-            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
+            var service = new order_services(db);
+            var controller = new orderi(service, NullLogger<orderi>.Instance);
 
             var result = await controller.get_by_id(1000);
 
@@ -816,5 +816,5 @@ namespace Order_Mangment_System_Test
         }
     }
 }
-    
-    
+
+
