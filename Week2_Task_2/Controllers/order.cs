@@ -65,27 +65,27 @@ namespace Week2_Task_2.Controllers
         [HttpPost]
         public async Task<ActionResult<response_order>> Create([FromBody] add_order dto)
         {
-            logger.LogInformation("creating order for customer customerid", dto.customer_id);
+           
 
           //  await using var tt = await dp.Database.BeginTransactionAsync();
          // await using var tt=await dp.Database.BeginTransactionAsync();
-            float total = 0;
+          //  float total = 0;
             if (dto == null)
             {
                 return BadRequest("the form is null");
             }
-            
+            logger.LogInformation("creating order for customer customerid", dto.customer_id);
 
-          /*  if (dto.customer_id < 0 || await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id) == null)
-            {
-                logger.LogWarning("order creation failed,,customer customerid{id} not found", dto.customer_id);
-                return BadRequest("the customer id is invalid or the customer does not exist");
-                
-            }
-            
-            */
-           // var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
-           var x=await service.Create(dto);
+            /*  if (dto.customer_id < 0 || await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id) == null)
+              {
+                  logger.LogWarning("order creation failed,,customer customerid{id} not found", dto.customer_id);
+                  return BadRequest("the customer id is invalid or the customer does not exist");
+
+              }
+
+              */
+            // var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
+            var x=await service.Create(dto);
             logger.LogInformation("order {id} created successfully for customer {customerId}",x.id, x.customer_id );
 
             /*   var order = new models.order
@@ -183,7 +183,7 @@ namespace Week2_Task_2.Controllers
         public async Task<ActionResult<List<response_order>>>update(int id,[FromBody]add_order dto)
         {
        //     var x=await dp.order.FirstOrDefaultAsync(x=>x.id==id);
-            if (id < 0)
+            if (id <= 0)
             {
                 return BadRequest("the id must be above 0");
             }
