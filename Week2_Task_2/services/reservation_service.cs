@@ -220,6 +220,10 @@ namespace Week2_Task_2.services
 
             return order;
         }
+        public async Task<List<reservartion>> GetAll()
+        {
+            return await db.reservations.ToListAsync();
+        }
 
 
     }

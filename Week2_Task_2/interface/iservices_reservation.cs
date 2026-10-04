@@ -11,5 +11,6 @@ namespace Week2_Task_2
         Task<bool> Cancel(int id);
         Task<int> ExpireReservations();
         Task<order?> ConvertToOrder(int id);
+        Task<List<reservartion>> GetAll();
     }
 }
