@@ -21,10 +21,8 @@ namespace Week2_Task_2.Controllers
        // private readonly data_base db;
         private readonly customer_services _service;
         private readonly ILogger<customeri> logger;
-        public customeri(data_base data, customer_services service, ILogger<customeri> logger)
+        public customeri(customer_services service,ILogger<customeri> logger)
         {
-
-          //  db = data;
             _service = service;
             this.logger = logger;
         }
@@ -39,7 +37,7 @@ namespace Week2_Task_2.Controllers
 
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<data_base>>> Get_by_id(int id)
+        public async Task<ActionResult<models.customer>> Get_by_id(int id)
         {
             var x = await _service.GetById(id);
            // var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
@@ -73,8 +71,8 @@ namespace Week2_Task_2.Controllers
             {
                 logger.LogWarning("the customer{id}not founded", id);
 
-                return NotFound();
-               
+                return BadRequest("id must be greater than 0");
+
 
             }
             var x = await _service.Update(id, dto);
@@ -97,7 +95,7 @@ namespace Week2_Task_2.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<response_customer>>> delete(int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
                 return BadRequest("id must be greater than 0");
             }
