@@ -83,7 +83,7 @@ namespace Week2_Task_2.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<response_prod>> update(update_prod d, int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
             //    return NotFound("product not found");
                return BadRequest("the id must be grater than 0");
@@ -103,7 +103,7 @@ namespace Week2_Task_2.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<response_prod>> Delete(int id)
         {
-            if (id < 0)
+            if (id <= 0)
             {
           //      return NotFound("product not found");
                 return BadRequest("must be above 0");
