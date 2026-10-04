@@ -22,7 +22,7 @@ namespace Week2_Task_2.services
             if (cus == null)
             {
                 logger.LogWarning("the customer with {id} not found", dto.customer_id);
-                throw new Exception("customer does not exist");
+                throw new InvalidOperationException("customer does not exist");
             }
             if (dto.items == null)
             {
@@ -44,22 +44,22 @@ namespace Week2_Task_2.services
                 if (product == null)
                 {
                     logger.LogWarning("the product is null");
-                    throw new Exception($"Product {i.product_id} does not exist");
+                    throw new InvalidOperationException("product does not exist");
                 }
                 if (product.active == false)
                 {
                     logger.LogWarning("reservation creation failed, product {ProductId} is inactive", i.product_id);
-                    throw new Exception("the product must be active");
+                    throw new InvalidOperationException("the product must be active");
                 }
                 if (i.quantity <= 0)
                 {
                     logger.LogWarning("the quantity must be above 0");
-                    throw new Exception("the quantity must be above 0");
+                    throw new InvalidOperationException("the quantity must be above 0");
                 }
                 if (i.quantity > product.stock)
                 {
                     logger.LogWarning("the quantity must be below the product stock");
-                    throw new Exception("the quantity is above the product stock");
+                    throw new InvalidOperationException("the quantity is above the product stock");
                 }
                 product.stock -= i.quantity;
                 logger.LogInformation("the quantity you need is reserved");
@@ -75,7 +75,7 @@ namespace Week2_Task_2.services
             await db.SaveChangesAsync();
             return reservation;
         }
-        public async Task<reservartion> GetById(int id)
+        public async Task<reservartion?> GetById(int id)
         {
             var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
             if (res == null)

@@ -103,7 +103,7 @@ namespace Week2_Task_2.Controllers
             if (x == null)
             {
                 logger.LogWarning("product {Id} not found", id);
-                return BadRequest("the product is null");
+                return NotFound("the product is null");
                 
             }
             x.name = d.name;
@@ -132,7 +132,8 @@ namespace Week2_Task_2.Controllers
             if(x == null)
             {
                 logger.LogWarning(" the product is not found {id}", id);
-                return BadRequest("the product is not found");
+                return NotFound("the product is not found");
+
                 
             }
             _data.prod.Remove(x);
