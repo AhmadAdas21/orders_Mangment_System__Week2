@@ -27,7 +27,7 @@ namespace Week2_Task_2.services
             if (dto.items == null)
             {
                 logger.LogWarning("the items are null");
-                throw new Exception("Reservation must contain at least one item");
+                throw new InvalidOperationException("reservation must contain at least one item");
             }
             var reservation = new reservartion
             {
@@ -81,7 +81,7 @@ namespace Week2_Task_2.services
             if (res == null)
             {
                 logger.LogWarning("the reservation not existing");
-                throw new Exception("the reservation dosent exist");
+                return null;
             }
             else
             {
@@ -173,7 +173,7 @@ namespace Week2_Task_2.services
                     i.product.stock += i.quantity;
                 }
 
-                res.status = "Expired";
+                res.status = "expired";
 
                 await db.SaveChangesAsync();
                 await transaction.CommitAsync();

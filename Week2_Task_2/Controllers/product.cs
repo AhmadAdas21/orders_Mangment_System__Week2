@@ -62,7 +62,7 @@ namespace Week2_Task_2.Controllers
 
             if (x == null)
             {
-                return BadRequest("invalid id num");
+                return NotFound("invalid id num");
             }
             return Ok(x);
         }

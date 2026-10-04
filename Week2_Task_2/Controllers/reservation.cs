@@ -76,6 +76,7 @@ namespace Week2_Task_2.Controllers
             res.customer_id = dto.customer_id;
             res.customer = await db.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
             res.expires_at = DateTime.Now.AddMinutes(15);
+            await db.SaveChangesAsync();
 
             return Ok(res);
 
