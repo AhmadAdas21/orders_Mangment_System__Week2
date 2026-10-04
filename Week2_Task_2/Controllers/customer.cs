@@ -21,11 +21,11 @@ namespace Week2_Task_2.Controllers
        // private readonly data_base db;
         private readonly customer_services _service;
         private readonly ILogger<customeri> logger;
-        public customeri(data_base data, iservices service, ILogger<customeri> logger)
+        public customeri(data_base data, customer_services service, ILogger<customeri> logger)
         {
 
           //  db = data;
-            _service = _service;
+            _service = service;
             this.logger = logger;
         }
 
