@@ -175,6 +175,9 @@ namespace Order_Mangment_System_Test.integration
             var getResponse = await client.GetAsync("/api/orders");
 
             Assert.Equal(HttpStatusCode.OK,getResponse.StatusCode );
+         //   Assert.NotEqual(HttpStatusCode.OK, getResponse.StatusCode );
+       
+            
 
 
 

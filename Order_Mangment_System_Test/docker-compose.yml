@@ -1,0 +1,34 @@
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: order-sql-compose
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "OrderApi!2026#Sql"
+    ports:
+      - "1433:1433"
+    volumes:
+      - order-sql-data:/var/opt/mssql
+    networks:
+      - order-network-compose
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-api-compose
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sql;Database=OrderManagementDB;User Id=sa;Password=OrderApi!2026#Sql;Encrypt=False;TrustServerCertificate=True;"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sql
+    networks:
+      - order-network-compose
+
+networks:
+  order-network-compose:
+
+volumes:
+  order-sql-data:
