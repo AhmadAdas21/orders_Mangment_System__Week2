@@ -2,8 +2,7 @@
 using System.Runtime.Intrinsics.Arm;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Week2_Task_2.Data;
+
 using Week2_Task_2.Dto.customer;
 using Week2_Task_2.Dto.orders;
 using Week2_Task_2.services;
@@ -13,15 +12,15 @@ namespace Week2_Task_2.Controllers
 {
     [ApiController]
     [Route("api/orders")]
-    public class orderi: ControllerBase
+    public class order_controller: ControllerBase
     {
       
-        private readonly ILogger<orderi> logger;
+        private readonly ILogger<order_controller> logger;
         private readonly order_services service;
      
 
 
-        public orderi( order_services service,ILogger<orderi> logger)
+        public order_controller( order_services service,ILogger<order_controller> logger)
         {
             this.service = service;
             this.logger = logger;
@@ -59,31 +58,33 @@ namespace Week2_Task_2.Controllers
         [HttpPost]
         public async Task<ActionResult<response_order>> Create([FromBody] add_order dto)
         {
-            logger.LogInformation("creating order for customer customerid", dto.customer_id);
-
+           
         
           
             if (dto == null)
             {
                 return BadRequest("the form is null");
             }
-            
+           
 
-          
-           var x=await service.Create(dto);
-            logger.LogInformation("order {id} created successfully for customer {customerId}",x.id, x.customer_id );
+           
+
+
+
+            var order =await service.Create(dto);
+            logger.LogInformation("order {id} created successfully for customer {customerId}", order.id, order.customer_id );
 
            
                
 
-            return CreatedAtAction( nameof(get_by_id), new { id = x.id },
+            return CreatedAtAction( nameof(get_by_id), new { id = order.id },
                 new
                 {
-                    id = x.id,
-                    customer_id = x.customer_id,
-                    total = x.total,
-                    status = x.status,
-                    created_date = x.created_date
+                    id = order.id,
+                    customer_id = order.customer_id,
+                    total = order.total,
+                    status = order.status,
+                    created_date = order.created_date
                 }
             );
         }
@@ -91,12 +92,12 @@ namespace Week2_Task_2.Controllers
         public async Task<ActionResult<List<response_order>>>update(int id,[FromBody]add_order dto)
         {
      
-            if (id < 0)
+            if (id <= 0)
             {
                 return BadRequest("the id must be above 0");
             }
-            var x = await service.Update(id, dto);
-            if (!x)
+            var order = await service.Update(id, dto);
+            if (!order)
             {
                 logger.LogWarning("the order with id {id} not found", id);
                 return NotFound("order not found");
@@ -114,8 +115,8 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("must be above 0");
             }
-            var x= await service.Delete(id);
-            if (!x)
+            var order= await service.Delete(id);
+            if (!order)
             {
                 logger.LogWarning("the order with id {id} not found", id);
                 return NotFound("order not found");
