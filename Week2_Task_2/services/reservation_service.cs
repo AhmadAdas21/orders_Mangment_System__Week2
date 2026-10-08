@@ -1,9 +1,9 @@
 ﻿using Week2_Task_2.models;
 using Week2_Task_2.Data;
-using Week2_Task_2.Data;
+
 using Week2_Task_2.Dto.reservation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 namespace Week2_Task_2.services
 {
     public class reservation_service : iservices_reservation
@@ -100,7 +100,7 @@ namespace Week2_Task_2.services
             if (res == null)
             {
                 logger.LogWarning("the reservation id with id {id} dosent exist", id);
-                throw new Exception("the reservation dosent exist");
+                return false;
             }
             if (res.status != "Active")
             {
