@@ -120,7 +120,7 @@ namespace Week2_Task_2.Controllers
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(orderi.get_by_id), "orderi",new { id = order.id },
+            return CreatedAtAction(nameof(order_controller.get_by_id), "orderi",new { id = order.id },
                 new
                 {
                     id = order.id,

@@ -73,7 +73,7 @@ namespace Order_Mangment_System_Test
 
             var service = new order_services(db);
 
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
             var oo = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(order));
             db.SaveChangesAsync();
             var bad = oo;
@@ -125,7 +125,7 @@ namespace Order_Mangment_System_Test
 
             var service = new order_services(db);
 
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var dto = new add_order
             {
@@ -181,7 +181,7 @@ namespace Order_Mangment_System_Test
 
             var service = new order_services(db);
 
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -243,7 +243,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -317,7 +317,7 @@ namespace Order_Mangment_System_Test
 
             };
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
             var kk = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.Create(o));
             var oo = kk;
 
@@ -368,7 +368,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
             order_services s = new order_services(db);
             //var con=new Controller()
-            var c = new orderi(s, NullLogger<orderi>.Instance);
+            var c = new order_controller(s, NullLogger<order_controller>.Instance);
             // await db.order.AddAsync(order);
 
             var dd = await Assert.ThrowsAsync<InvalidOperationException>(() => c.Create(order));
@@ -408,7 +408,7 @@ namespace Order_Mangment_System_Test
 
             var service = new order_services(db);
 
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -468,7 +468,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -525,7 +525,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -584,7 +584,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -640,7 +640,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -696,7 +696,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -753,7 +753,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var order = new add_order
             {
@@ -790,7 +790,7 @@ namespace Order_Mangment_System_Test
 
             await db.Database.EnsureCreatedAsync();
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
             var res = await controller.delete(100);
             var x = Assert.IsType<NotFoundObjectResult>(res.Result);
             Assert.Equal("order not found", x.Value);
@@ -807,7 +807,7 @@ namespace Order_Mangment_System_Test
 
             await db.Database.EnsureCreatedAsync();
             var service = new order_services(db);
-            var controller = new orderi(service, NullLogger<orderi>.Instance);
+            var controller = new order_controller(service, NullLogger<order_controller>.Instance);
 
             var result = await controller.get_by_id(1000);
 
