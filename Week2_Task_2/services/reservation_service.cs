@@ -1,9 +1,9 @@
 ﻿using Week2_Task_2.models;
 using Week2_Task_2.Data;
-using Week2_Task_2.Data;
+
 using Week2_Task_2.Dto.reservation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 namespace Week2_Task_2.services
 {
     public class reservation_service : iservices_reservation
@@ -92,26 +92,32 @@ namespace Week2_Task_2.services
         }
         public async Task<bool> Cancel(int id)
         {
-            var res = await db.reservations
+            var reservation = await db.reservations
                 .Include(x => x.items)
                 .ThenInclude(x => x.product)
                 .FirstOrDefaultAsync(x => x.id == id);
 
-            if (res == null)
+            if (reservation == null)
             {
-                logger.LogWarning("the reservation id with id {id} dosent exist", id);
-                throw new Exception("the reservation dosent exist");
-            }
-            if (res.status != "Active")
-            {
+                logger.LogWarning("reservation {id} does not exist",id);
+
                 return false;
             }
-            foreach (var i in res.items)
+
+            if (reservation.status != "Active")
             {
-                i.product.stock += i.quantity;
+                throw new InvalidOperationException("reservation cannot be cancelled due to its current status");
             }
-            res.status = "Cancelled";
+
+            foreach (var item in reservation.items)
+            {
+                item.product.stock += item.quantity;
+            }
+
+            reservation.status = "Cancelled";
+
             await db.SaveChangesAsync();
+
             return true;
         }
         public async Task<int> ExpireReservations()
@@ -219,6 +225,10 @@ namespace Week2_Task_2.services
             logger.LogInformation("reservation {reservationId} converted to order {orderId}",res.id,order.id);
 
             return order;
+        }
+        public async Task<List<reservartion>> GetAll()
+        {
+            return await db.reservations.ToListAsync();
         }
 
 
