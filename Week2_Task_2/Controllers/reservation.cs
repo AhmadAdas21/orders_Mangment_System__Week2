@@ -56,15 +56,10 @@ namespace Week2_Task_2.Controllers
             return Ok(reservation);
         }
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> GetAll()
         {
-            var result = await service.GetAll();
-            if (result.Count == 0)
-            {
-                logger.LogWarning("theres no reservations yet");
-                return NotFound();
-            }
-            return Ok(result);
+            var reservations = await service.GetAll();
+            return Ok(reservations);
         }
     
         [HttpPut("{id}/cancel")]
@@ -72,22 +67,16 @@ namespace Week2_Task_2.Controllers
         {
             if (id <= 0)
             {
-                logger.LogWarning("the id {id} is not valid", id);
                 return BadRequest("the id must be above 0");
             }
-            var result = await service.GetById(id);
-            if (result == null)
+
+            var cancelled = await service.Cancel(id);
+
+            if (!cancelled)
             {
-                logger.LogWarning("the id{id} is not valid", id);
+                logger.LogWarning("reservation {id} not found", id);
                 return NotFound();
             }
-            if (result.status != "Active")
-            {
-                logger.LogWarning("reservation {id} cannot be cancelled because status is {status}", id, result.status);
-
-                return BadRequest("Reservation cannot be cancelled due to its current status." );
-            }
-            await service.Cancel(id);
 
             return NoContent();
         }

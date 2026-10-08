@@ -92,26 +92,32 @@ namespace Week2_Task_2.services
         }
         public async Task<bool> Cancel(int id)
         {
-            var res = await db.reservations
+            var reservation = await db.reservations
                 .Include(x => x.items)
                 .ThenInclude(x => x.product)
                 .FirstOrDefaultAsync(x => x.id == id);
 
-            if (res == null)
+            if (reservation == null)
             {
-                logger.LogWarning("the reservation id with id {id} dosent exist", id);
+                logger.LogWarning("reservation {id} does not exist",id);
+
                 return false;
             }
-            if (res.status != "Active")
+
+            if (reservation.status != "Active")
             {
-                return false;
+                throw new InvalidOperationException("reservation cannot be cancelled due to its current status");
             }
-            foreach (var i in res.items)
+
+            foreach (var item in reservation.items)
             {
-                i.product.stock += i.quantity;
+                item.product.stock += item.quantity;
             }
-            res.status = "Cancelled";
+
+            reservation.status = "Cancelled";
+
             await db.SaveChangesAsync();
+
             return true;
         }
         public async Task<int> ExpireReservations()
