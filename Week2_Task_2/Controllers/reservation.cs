@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Week2_Task_2.Data;
 using Week2_Task_2.Dto.reservation;
-using Week2_Task_2.models;
+
 
 namespace Week2_Task_2.Controllers
 {
@@ -12,13 +10,13 @@ namespace Week2_Task_2.Controllers
     {
         private readonly iservices_reservation service;
         private readonly ILogger<reservation> logger;
-       // private readonly data_base db;
+      
 
         public reservation(iservices_reservation service, ILogger<reservation> logger)
         {
             this.service = service;
             this.logger = logger;
-           // this.db = db;
+          
         }
 
         [HttpPost]
@@ -26,8 +24,7 @@ namespace Week2_Task_2.Controllers
         {
             var reservation = await service.Create(dto);
             logger.LogInformation("reservation with id{id}", reservation.id);
-        //    await db.reservations.AddAsync(reservation);
-         //   await db.SaveChangesAsync();
+        
             
             return CreatedAtAction(nameof(GetById), new { id = reservation.id },
                new
@@ -45,6 +42,10 @@ namespace Week2_Task_2.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("the id must be above 0");
+            }
             var reservation = await service.GetById(id);
             if (reservation == null)
             {
@@ -57,33 +58,15 @@ namespace Week2_Task_2.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var res = await service.GetAll();
-            if (res.Count == 0)
+            var result = await service.GetAll();
+            if (result.Count == 0)
             {
                 logger.LogWarning("theres no reservations yet");
                 return NotFound();
             }
-            return Ok(res);
+            return Ok(result);
         }
-     //   [HttpPut("{id}")]
-     /*   public async Task<ActionResult> update(int id, [FromBody] add_reservation dto)
-        {
-            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
-            if (res == null)
-            {
-                logger.LogWarning("the id {id}is not valid", id);
-                return NotFound();
-            }
-            res.customer_id = dto.customer_id;
-            res.customer = await db.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
-            res.expires_at = DateTime.Now.AddMinutes(15);
-            await db.SaveChangesAsync();
-
-            return Ok(res);
-
-
-        }
-     */
+    
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
@@ -92,15 +75,15 @@ namespace Week2_Task_2.Controllers
                 logger.LogWarning("the id {id} is not valid", id);
                 return BadRequest("the id must be above 0");
             }
-            var res = await service.GetById(id);
-            if (res == null)
+            var result = await service.GetById(id);
+            if (result == null)
             {
                 logger.LogWarning("the id{id} is not valid", id);
                 return NotFound();
             }
-            if (res.status != "Active")
+            if (result.status != "Active")
             {
-                logger.LogWarning("reservation {id} cannot be cancelled because status is {status}", id, res.status);
+                logger.LogWarning("reservation {id} cannot be cancelled because status is {status}", id, result.status);
 
                 return BadRequest("Reservation cannot be cancelled due to its current status." );
             }
@@ -111,6 +94,10 @@ namespace Week2_Task_2.Controllers
         [HttpPost("{id}/convert")]
         public async Task<ActionResult> convert_order(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("the id must be above 0");
+            }
             var order = await service.ConvertToOrder(id);
 
             if (order == null)
@@ -120,7 +107,7 @@ namespace Week2_Task_2.Controllers
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(orderi.get_by_id), "orderi",new { id = order.id },
+            return CreatedAtAction(nameof(orderi.get_by_id), nameof(orderi), new { id = order.id },
                 new
                 {
                     id = order.id,
